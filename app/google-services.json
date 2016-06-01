@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "623068810953",
+    "project_id": "glogin-1329"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623068810953:android:a86f6538cff64185",
+        "android_client_info": {
+          "package_name": "com.example.sociallogin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "623068810953-ksuhq55gls00bt7kms0nt361b85ahibq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sociallogin",
+            "certificate_hash": "7CC501C32C500A44BF63DFCC1DFD18CFD204B6B6"
+          }
+        },
+        {
+          "client_id": "623068810953-1n8f1eb17c2jgdhe97jthl3u5vmhm4s3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGsF_PDYFSVop1SyPJVcg0Giqm9SYx-HE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
