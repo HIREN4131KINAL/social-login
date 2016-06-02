@@ -32,6 +32,9 @@
         </activity>
 
         <activity android:name=".AfterLogin"></activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="0743f3c45e2ad59d1571de4651c2c15de9577d4d" />
     </application>
 
 </manifest>

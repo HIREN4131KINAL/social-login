@@ -37,6 +37,16 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.sdk.android.core.models.User;
+
+import io.fabric.sdk.android.Fabric;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,6 +56,18 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
+    //Twitter
+    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
+    private static final String TWITTER_KEY = "GzE4GATBFLl7S9SxI2sWcNMA6";
+    private static final String TWITTER_SECRET = "2J5xJywEk8p9Vl3Rst5DgpXedDpsGKUOVzD83zSYP0J2HhHH9x";
+    //Tags to send the username and image url to next activity using intent
+    public static final String KEY_USERNAME = "username";
+    public static final String KEY_PROFILE_IMAGE_URL = "image_url";
+
+    //Twitter Login Button
+    TwitterLoginButton twitterLoginButton;
+
+
     private CallbackManager callbackManager;
     private LoginButton fbLoginButton;
     static String Name, Email, ProfilePic, DOB, ID;
@@ -54,19 +76,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //Signin button
     private SignInButton signInButton;
-
     //Signing Options
     private GoogleSignInOptions gso;
-
     //google api client
     private GoogleApiClient mGoogleApiClient;
-
     //Signin constant to check the activity result
     private int RC_SIGN_IN = 100;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new Twitter(authConfig));
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
@@ -84,6 +106,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
+
+        //Initializing twitter login button
+        twitterLoginButton = (TwitterLoginButton) findViewById(R.id.twitterLogin);
+        //Adding callback to the button
+        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                //If login succeeds passing the Calling the login method and passing Result object
+                login(result);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                //If failure occurs while login handle it here
+                Log.d("TwitterKit", "Login with Twitter failure", exception);
+            }
+        });
 
         //Initializing signinbutton
         signInButton = (SignInButton) findViewById(R.id.sign_in_button);
@@ -113,6 +152,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Setting onclick listener to signing button
         signInButton.setOnClickListener(this);
 
+    }
+
+    //The twitter login function accepting the result object
+    public void login(Result<TwitterSession> result) {
+
+        //Creating a twitter session with result's data
+        TwitterSession session = result.data;
+
+        //Getting the username from session
+        final String username = session.getUserName();
+
+        //This code will fetch the profile image URL
+        //Getting the account service of the user logged in
+        Twitter.getApiClient(session).getAccountService()
+                .verifyCredentials(true, false, new Callback<User>() {
+                    @Override
+                    public void failure(TwitterException e) {
+                        //If any error occurs handle it here
+                    }
+
+                    @Override
+                    public void success(Result<User> userResult) {
+                        //If it succeeds creating a User object from userResult.data
+                        User user = userResult.data;
+
+                        //Getting the profile image url
+                        String profileImage = user.profileImageUrl.replace("_normal", "");
+//                        String Email = user.email.replace("email", "");
+
+                        //Creating an Intent
+                        Intent intent = new Intent(MainActivity.this, AfterLogin.class);
+
+                        //Adding the values to intent
+                        intent.putExtra("Name",username);
+                        intent.putExtra("ImgURL", profileImage);
+//                        intent.putExtra("Email", Email);
+
+                        Log.i("Twitter", "success: "+profileImage );
+                        Log.i("Twitter", "success: "+username);
+                        //Starting intent
+                        startActivity(intent);
+                    }
+                });
     }
 
     //This function will option signing intent
@@ -232,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int reqCode, int resCode, Intent i) {
         callbackManager.onActivityResult(reqCode, resCode, i);
-
+        twitterLoginButton.onActivityResult(reqCode, resCode, i);
         //If signin
         if (reqCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(i);
