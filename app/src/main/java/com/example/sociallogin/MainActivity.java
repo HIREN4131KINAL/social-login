@@ -162,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Getting the username from session
         final String username = session.getUserName();
+        Long  userid = session.getUserId();
 
         //This code will fetch the profile image URL
         //Getting the account service of the user logged in
@@ -240,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     intent.putExtra("Email", Email);
                                     intent.putExtra("DOB", DOB);
                                     intent.putExtra("ID", ID);
-                                    intent.putExtra("ProfilePic", ImgURL);
+                                    intent.putExtra("ImgURL", ImgURL);
 
                                     startActivity(intent);
 
@@ -263,7 +264,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 System.out.println("Authentication Token : " + loginResult.getAccessToken().getToken());
 
             }
-
 
             @Override
             public void onCancel() {
@@ -343,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent(MainActivity.this, AfterLogin.class);
             intent.putExtra("Name", Name);
             intent.putExtra("Email", Email);
-            intent.putExtra("ProfilePic", acct.getPhotoUrl().toString());
+            intent.putExtra("ImgURL", ImgURL);
             intent.putExtra("ID", ID);
             Log.i("", "image url: "+ImgURL);
             startActivity(intent);

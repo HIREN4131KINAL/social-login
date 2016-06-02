@@ -52,7 +52,7 @@ public class AfterLogin extends AppCompatActivity {
 
 //            ImgURL = "https://graph.facebook.com/" + ID + "/picture?type=large";
             Picasso.with(AfterLogin.this)
-                    .load("" + acct.getPhotoUrl().toString())
+                    .load("" + ProfilePic)
                     .into(ProfilePicImg);
         } catch (Exception e) {
 
